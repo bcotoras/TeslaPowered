@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryProperty;
@@ -12,11 +13,13 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Page implements Displayable {
-
+	
     public static final Element FIRST = Element.builder().build();
     public static final Element LAST = Element.builder().build();
     public static final Element NEXT = Element.builder().build();
@@ -27,6 +30,12 @@ public class Page implements Displayable {
     private final View.Builder view;
     private final Layout layout;
     private final PluginContainer container;
+        
+    private Map<ButtonType, HashMap<TargetType, ItemType>> ElementPageButtonMap;
+    
+    public void setElementItemType(ButtonType bType, TargetType tType, ItemType iType) {
+    	ElementPageButtonMap.get(bType).put(tType, iType);
+    }
 
     /**
      * Creates a new {@link Page} with a backing inventory defined by the given
@@ -36,6 +45,30 @@ public class Page implements Displayable {
         view = builder.view;
         layout = builder.layout;
         this.container = container;
+        
+        ElementPageButtonMap = new HashMap<ButtonType, HashMap<TargetType, ItemType>>()
+        {{
+        	put(ButtonType.FIRST, new HashMap<TargetType, ItemType>() {{
+    			put(TargetType.NORMAL, ItemTypes.PAPER);
+    			put(TargetType.CURRENT, ItemTypes.MAP);
+    		}});
+        	put(ButtonType.PREVIOUS, new HashMap<TargetType, ItemType>() {{
+    			put(TargetType.NORMAL, ItemTypes.PAPER);
+    			put(TargetType.CURRENT, ItemTypes.MAP);
+    		}});
+        	put(ButtonType.NEXT, new HashMap<TargetType, ItemType>() {{
+    			put(TargetType.NORMAL, ItemTypes.PAPER);
+    			put(TargetType.CURRENT, ItemTypes.MAP);
+    		}});
+        	put(ButtonType.LAST, new HashMap<TargetType, ItemType>() {{
+    			put(TargetType.NORMAL, ItemTypes.PAPER);
+    			put(TargetType.CURRENT, ItemTypes.MAP);
+    		}});
+        	put(ButtonType.CURRENT, new HashMap<TargetType, ItemType>() {{
+    			put(TargetType.NORMAL, ItemTypes.PAPER);
+    			put(TargetType.CURRENT, ItemTypes.MAP);
+    		}});
+        }};
     }
 
     /**
@@ -80,11 +113,11 @@ public class Page implements Displayable {
         for (int i = 1; i <= pages; i++) {
             views.add(view.build(container).define(Layout.builder()
                     .from(layout)
-                    .replace(FIRST, createElement("First Page", i, 1))
-                    .replace(LAST, createElement("Last Page", i, pages))
-                    .replace(NEXT, createElement("Next Page", i, i == pages ? i : i + 1))
-                    .replace(PREVIOUS, createElement("Previous Page", i, i == 1 ? i : i - 1))
-                    .replace(CURRENT, createElement("Current Page", i, i))
+                    .replace(FIRST, createElement(ButtonType.FIRST, "First Page", i, 1))
+                    .replace(LAST, createElement(ButtonType.LAST, "Last Page", i, pages))
+                    .replace(NEXT, createElement(ButtonType.NEXT, "Next Page", i, i == pages ? i : i + 1))
+                    .replace(PREVIOUS, createElement(ButtonType.PREVIOUS, "Previous Page", i, i == 1 ? i : i - 1))
+                    .replace(CURRENT, createElement(ButtonType.CURRENT, "Current Page", i, i))
                     .page(elements.subList((i - 1) * capacity, i == pages ? elements.size() : i * capacity))
                     .build()));
         }
@@ -94,9 +127,9 @@ public class Page implements Displayable {
     /**
      * Creates an element for a certain page number and target page.
      */
-    private Element createElement(String name, int page, int target) {
+    private Element createElement(ButtonType bType, String name, int page, int target) {
         ItemStack item = ItemStack.builder()
-                .itemType(page == target ? ItemTypes.MAP : ItemTypes.PAPER)
+                .itemType(page == target ? ElementPageButtonMap.get(bType).get(TargetType.CURRENT) : ElementPageButtonMap.get(bType).get(TargetType.NORMAL))
                 .add(Keys.DISPLAY_NAME, Text.of(name, " (", target, ")"))
                 .quantity(target)
                 .build();
