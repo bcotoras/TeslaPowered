@@ -32,9 +32,14 @@ public class Page implements Displayable {
     private final PluginContainer container;
         
     private Map<ButtonType, HashMap<TargetType, ItemType>> ElementPageButtonMap;
+    private int currentPage = 1;
     
     public void setElementItemType(ButtonType bType, TargetType tType, ItemType iType) {
     	ElementPageButtonMap.get(bType).put(tType, iType);
+    }
+    
+    public int getCurrentPage() {
+    	return this.currentPage;
     }
 
     /**
@@ -89,7 +94,7 @@ public class Page implements Displayable {
      */
     @Override
     public void open(Player player) {
-        views.get(0).open(player);
+        this.open(player, 1);
     }
 
     /**
@@ -97,7 +102,8 @@ public class Page implements Displayable {
      * the index is out of bounds, the closest valid page will be opened.
      */
     public void open(Player player, int page) {
-        views.get((page > 1 ? Math.min(page, views.size()) - 1 : 0)).open(player);
+    	this.currentPage = (page > 1 ? Math.min(page, views.size()):1);
+        views.get(currentPage-1).open(player);
     }
 
     /**
