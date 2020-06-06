@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.mcsimonflash.sponge.teslapowered'
-version '1.2.2'
+version '1.2.3'
 ext.spongeversion = '7.1.0-SNAPSHOT'
 
 subprojects {
@@ -40,5 +40,4 @@ task copyJars(type: Copy) {
     from([subprojects.jar, project(':TeslaLibs').sourcesJar, shadowJar])
     into project.file("#releases/${version}")
 }
-
 build.dependsOn(copyJars)

@@ -11,7 +11,7 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-@Plugin(id = "teslacore", name = "TeslaCore", version = "1.1.6", dependencies = @Dependency(id = "teslalibs"), description = "Conductor of all things Tesla", authors = "Simon_Flash")
+@Plugin(id = "teslacore", name = "TeslaCore", version = "1.2.3", dependencies = @Dependency(id = "teslalibs"), description = "Conductor of all things Tesla", authors = "Xephiro")
 public class TeslaCore extends Tesla {
 
     @Inject
@@ -24,6 +24,7 @@ public class TeslaCore extends Tesla {
         Logger logger = getContainer().getLogger();
         logger.info("+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=+");
         logger.info("|     TeslaPowered -- Simon_Flash     |");
+        logger.info("|     Modified 	-- Xephiro		   |");
         logger.info("|                                     |");
         Tesla.getRegistry().values().forEach(t -> {
             String message = t.getContainer().getId() + ": v" + t.getContainer().getVersion().orElse("unknown");
